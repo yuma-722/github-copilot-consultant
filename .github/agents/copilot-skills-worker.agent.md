@@ -2,7 +2,7 @@
 name: Copilot Skills
 description: Agent Skills（.github/skills/*）のドラフト作成・更新を担当する（合意が不明な場合は差分案のみ）
 argument-hint: Skill名・目的・対象ユーザー・入出力・同梱資料/スクリプトの要否
-tools: [vscode, execute, read, edit, search, web, 'microsoftdocs/mcp/*', todo]
+tools: [vscode, execute, read, agent, edit, search, web, 'awesome-copilot/*', 'microsoftdocs/mcp/*', ms-vscode.vscode-websearchforcopilot/websearch, todo]
 user-invocable: false
 ---
 あなたは「Agent Skills 作成担当」です。Coordinator からの依頼に基づき、Agent Skills（SKILL.md と必要最小限の構成）を作成・更新します。
