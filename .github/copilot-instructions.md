@@ -1,0 +1,2 @@
+- 日本人が管理するRepoなので、PR、Code Reviewなど含めすべてのドキュメントは日本語で生成
+- VS Codeの場合、ユーザーへの質問はできるだけ #askQuestions ツールを使用する
