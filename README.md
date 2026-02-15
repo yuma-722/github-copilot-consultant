@@ -2,7 +2,7 @@
 
 GitHub Copilotのカスタマイズを行うためのベースをそろえたRepoです。
 
-**狙い:** カスタムエージェント「Copilot Consultant」を入口にして、専門 Worker エージェントへ作業を委譲し、`.github` 配下のカスタマイズ一式を生成・更新できるようにするサンプルです。
+**狙い:** カスタムエージェント「Copilot Consultant」を入口にして、統合 Worker エージェント「Copilot Custom Worker」へ作業を委譲し、`.github` 配下のカスタマイズ一式を生成・更新できるようにするサンプルです。
 
 ## ひと目でわかる関係図
 
@@ -10,17 +10,13 @@ GitHub Copilotのカスタマイズを行うためのベースをそろえたRep
 flowchart LR
   U["あなたの依頼<br/>(自然文)"] --> C["Copilot Consultant<br/>(Coordinator)"]
 
-  C --> W1["Copilot Instructions<br/>(Worker)"]
-  C --> W2["Copilot Custom Agents<br/>(Worker)"]
-  C --> W3["Copilot Prompts<br/>(Worker)"]
-  C --> W4["Copilot Hooks<br/>(Worker)"]
-  C --> W5["Copilot Skills<br/>(Worker)"]
+  C --> W["Copilot Custom Worker<br/>(統合 Worker)"]
 
-  W1 -->|Skill| S1["custom-instructions-creator"]
-  W2 -->|Skill| S2["custom-agents-creator"]
-  W3 -->|Skill| S3["prompt-creator"]
-  W4 -->|Skill| S4["hooks-creator"]
-  W5 -->|Skill| S5["skill-creator"]
+  W -->|Skill| S1["custom-instructions-creator"]
+  W -->|Skill| S2["custom-agents-creator"]
+  W -->|Skill| S3["prompt-creator"]
+  W -->|Skill| S4["hooks-creator"]
+  W -->|Skill| S5["skill-creator"]
 
   S1 --> O1[".github/*instructions*.md"]
   S2 --> O2[".github/agents/*.agent.md"]
@@ -36,11 +32,7 @@ flowchart LR
 ├── copilot-instructions.md          # Always-on instructions（全体共通ルール）
 ├── agents/
 │   ├── copilot-consultant.agent.md  # Coordinator（入口・オーケストレーター）
-│   ├── copilot-instructions-worker.agent.md  # Instructions Worker
-│   ├── copilot-agents-worker.agent.md        # Custom Agents Worker
-│   ├── copilot-prompts-worker.agent.md       # Prompts Worker
-│   ├── copilot-hooks-worker.agent.md         # Hooks Worker
-│   └── copilot-skills-worker.agent.md        # Skills Worker
+│   └── copilot-custom-worker.agent.md  # 統合 Worker（全カスタマイズ種別を担当）
 ├── prompts/
 │   ├── update-copilot-customizations.prompt.md  # カスタマイズ資産の最新化
 │   └── update-skill-creator.prompt.md           # skill-creator の改善・更新
@@ -58,11 +50,11 @@ flowchart LR
 
 | あなたの目的 | Coordinator が委譲する Worker | Worker が使う Skill | 目に見える成果物（例） |
 | --- | --- | --- | --- |
-| 口調・規約・禁止事項を揃える | Copilot Instructions | `custom-instructions-creator` | `.github/*instructions*.md` |
-| 専用の作業係（役割）を作る | Copilot Custom Agents | `custom-agents-creator` | `.github/agents/*.agent.md` |
-| 定型タスクを `/` で呼べる化 | Copilot Prompts | `prompt-creator` | `.github/prompts/*.prompt.md` |
-| 自動化（開始時/ツール前後） | Copilot Hooks | `hooks-creator` | `.github/hooks/*.json` |
-| 新しいスキルを追加する | Copilot Skills | `skill-creator` | `.github/skills/**/SKILL.md` |
+| 口調・規約・禁止事項を揃える | Copilot Custom Worker | `custom-instructions-creator` | `.github/*instructions*.md` |
+| 専用の作業係（役割）を作る | Copilot Custom Worker | `custom-agents-creator` | `.github/agents/*.agent.md` |
+| 定型タスクを `/` で呼べる化 | Copilot Custom Worker | `prompt-creator` | `.github/prompts/*.prompt.md` |
+| 自動化（開始時/ツール前後） | Copilot Custom Worker | `hooks-creator` | `.github/hooks/*.json` |
+| 新しいスキルを追加する | Copilot Custom Worker | `skill-creator` | `.github/skills/**/SKILL.md` |
 
 ## プロンプトファイル（/コマンド）
 
@@ -91,7 +83,7 @@ flowchart LR
 
 ## 設計方針
 
-- **Coordinator は編集しない**: Copilot Consultant はヒアリング・提案・合意取得に専念し、ファイル操作は Worker に委任
+- **Coordinator は編集しない**: Copilot Consultant はヒアリング・提案・合意取得に専念し、ファイル操作は Worker に委任（コンテキスト分離と並列実行のため）
 - **合意ファースト**: どの Worker もユーザー合意なしにファイルを変更しない（差分案のみ返す）
 - **最小差分**: 新規ファイル追加より既存ファイルの更新を優先
 - **スコープ厳守**: 変更対象は `.github/` 配下の Copilot カスタマイズ成果物のみ（ワークフロー・テンプレ・アプリコードは対象外）
