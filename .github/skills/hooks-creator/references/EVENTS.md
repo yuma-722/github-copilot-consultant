@@ -24,6 +24,19 @@
 | `stopReason` | string | 停止理由（モデルに表示） |
 | `systemMessage` | string | ユーザーに表示するメッセージ |
 
+補足:
+
+- イベント固有の詳細制御は `hookSpecificOutput` に入れる。
+- 複数の制御方法を同時に返した場合は、より制限の強い結果が優先される。
+
+## 終了コード
+
+| コード | 意味 |
+|-------|------|
+| `0` | 成功。stdout を JSON として処理する |
+| `2` | ブロッキングエラー。処理を止め、エラーをモデルに渡す |
+| その他 | 非ブロッキング警告。警告を表示して処理は続行する |
+
 ## SessionStart
 
 ### 入力
@@ -111,6 +124,8 @@
 
 ```json
 {
+  "decision": "block",
+  "reason": "Post-processing validation failed",
   "hookSpecificOutput": {
     "hookEventName": "PostToolUse",
     "additionalContext": "ファイルにlintエラーがあります"
@@ -122,7 +137,7 @@
 |-----------|------|------|
 | `decision` | `"block"` | 以降の処理をブロック（任意） |
 | `reason` | string | ブロック理由（モデルに表示） |
-| `additionalContext` | string | 会話に追加するコンテキスト |
+| `hookSpecificOutput.additionalContext` | string | 会話に追加するコンテキスト |
 
 ## PreCompact
 
@@ -216,3 +231,5 @@
 |-----------|------|------|
 | `decision` | `"block"` | エージェントの停止を阻止 |
 | `reason` | string | `"block"` 時必須。エージェントに継続すべき理由を伝える |
+
+補足: custom agent に定義した `Stop` は、その agent が subagent として実行された場合 `SubagentStop` としても扱われる。

@@ -1,2 +1,3 @@
 - 日本人が管理するRepoなので、PR、Code Reviewなど含めすべてのドキュメントは日本語で生成
 - VS Codeの場合、ユーザーへの質問はできるだけ #askQuestions ツールを使用する
+- リポジトリ全体の作業は「分析→設計→実装→検証→振り返り→引き渡し」を基本の流れとし、詳細な運用ルールは [仕様駆動ワークフロー](instructions/spec-driven-workflow.instructions.md) を参照する

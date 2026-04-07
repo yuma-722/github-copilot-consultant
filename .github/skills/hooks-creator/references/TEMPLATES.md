@@ -249,6 +249,26 @@ process.stdin.on("end", () => {
 }
 ```
 
+## パターン6.5: Agent-scoped hooks（Preview）
+
+特定の custom agent にだけ hook を効かせたい場合は、`.agent.md` frontmatter に直接 `hooks` を書く:
+
+```yaml
+---
+name: Strict Formatter
+description: 編集後にフォーマットを実行する
+hooks:
+  PostToolUse:
+    - type: command
+      command: "npx prettier --write \"$TOOL_INPUT_FILE_PATH\""
+---
+```
+
+注意:
+
+- `chat.useCustomAgentHooks` が必要
+- workspace hooks と同時に動くので、二重実行に注意する
+
 ## パターン7: Stop フックでテスト強制
 
 エージェント終了前にテストを必ず実行させる:
@@ -307,3 +327,5 @@ process.stdin.on("end", () => {
 - [ ] シークレットがハードコードされていない
 - [ ] stdin 入力をバリデーションしている
 - [ ] `stop_hook_active` を確認して無限ループを防止している（Stop/SubagentStop の場合）
+- [ ] Claude 形式から移植する場合、matcher が VS Code では無視される前提でスクリプト側ガードを入れている
+- [ ] Claude/Copilot CLI 由来の hook を移植する場合、tool 名と input のプロパティ名の違いを吸収している
