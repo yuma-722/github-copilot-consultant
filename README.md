@@ -17,12 +17,14 @@ flowchart LR
   W -->|Skill| S3["prompt-creator"]
   W -->|Skill| S4["hooks-creator"]
   W -->|Skill| S5["skill-creator"]
+  W -->|Skill| S6["plugin-creator"]
 
   S1 --> O1[".github/*instructions*.md"]
   S2 --> O2[".github/agents/*.agent.md"]
   S3 --> O3[".github/prompts/*.prompt.md"]
   S4 --> O4[".github/hooks/*.json"]
   S5 --> O5[".github/skills/**/SKILL.md"]
+  S6 --> O6["Agent Plugin / marketplace.json"]
 ```
 
 ## リポジトリ構成
@@ -41,7 +43,8 @@ flowchart LR
 │   ├── custom-agents-creator/         # Custom Agents 作成ナレッジ
 │   ├── prompt-creator/                # Prompt Files 作成ナレッジ
 │   ├── hooks-creator/                 # Hooks 作成ナレッジ
-│   └── skill-creator/                 # Skills 作成ナレッジ（scripts/ 同梱）
+│   ├── skill-creator/                 # Skills 作成ナレッジ（scripts/ 同梱）
+│   └── plugin-creator/                # Agent Plugins 作成ナレッジ
 └── workflows/
     └── copilot-setup-steps.yml        # Copilot coding agent 用セットアップ
 ```
@@ -55,6 +58,7 @@ flowchart LR
 | 定型タスクを `/` で呼べる化 | Copilot Custom Worker | `prompt-creator` | `.github/prompts/*.prompt.md` |
 | 自動化（開始時/ツール前後） | Copilot Custom Worker | `hooks-creator` | `.github/hooks/*.json` |
 | 新しいスキルを追加する | Copilot Custom Worker | `skill-creator` | `.github/skills/**/SKILL.md` |
+| カスタマイズをPluginに変換 | Copilot Custom Worker | `plugin-creator` | `plugins/<name>/plugin.json` |
 
 ## プロンプトファイル（/コマンド）
 
@@ -92,7 +96,57 @@ flowchart LR
 - 生成物は必ずレビューしてから取り込む（規約・安全・意図ズレ防止）
 - VS Code Chat の Diagnostics で instructions / skills の読み込み状況を確認できる
 
---- 
+## Agent Plugin としてインストール
+
+このリポジトリは **Agent Plugin マーケットプレイス** として公開されています。他のプロジェクトから Copilot Consultant をインストールして使えます。
+
+> ⚠️ Agent Plugins は Preview 機能です。`chat.plugins.enabled` を `true` に設定してください。
+
+### マーケットプレイスとして追加（推奨）
+
+VS Code の `settings.json` に以下を追加すると、Extensions ビューの Agent Plugins に表示されます：
+
+```jsonc
+"chat.plugins.marketplaces": ["yuma-722/github-copilot-consultant"]
+```
+
+Extensions ビューで `@agentPlugins` を検索 → `copilot-consultant` → Install
+
+### ソースから直接インストール
+
+1. コマンドパレット（`Ctrl+Shift+P`）
+2. `Chat: Install Plugin From Source`
+3. `https://github.com/yuma-722/github-copilot-consultant` を入力
+
+### ローカルインストール
+
+```jsonc
+"chat.pluginLocations": {
+  "/path/to/github-copilot-consultant/copilot-consultant": true
+}
+```
+
+### ワークスペースで推奨設定する
+
+チームメンバーに自動で Plugin を推奨するには、ワークスペース設定に追加：
+
+```jsonc
+{
+  "extraKnownMarketplaces": {
+    "github-copilot-consultant": {
+      "source": {
+        "source": "github",
+        "repo": "yuma-722/github-copilot-consultant"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "copilot-consultant@github-copilot-consultant": true
+  }
+}
+```
+
+---
 
 # このRepoを活用した仕様駆動の開発フロー（Plan → カスタマイズ → 実装）
 

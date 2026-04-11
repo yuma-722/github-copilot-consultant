@@ -1,0 +1,30 @@
+{
+  "name": "github-copilot-consultant",
+  "metadata": {
+    "description": "GitHub Copilot カスタマイズ支援プラグインのマーケットプレイス",
+    "version": "1.0.0"
+  },
+  "owner": {
+    "name": "yuma-722"
+  },
+  "plugins": [
+    {
+      "name": "copilot-consultant",
+      "source": "./copilot-consultant",
+      "description": "GitHub Copilot のカスタマイズ設定（instructions / prompts / agents / skills / hooks）を効率的に作成・管理するための相談窓口エージェントと専門スキル群",
+      "version": "1.0.0",
+      "author": {
+        "name": "yuma-722"
+      },
+      "keywords": [
+        "copilot",
+        "customization",
+        "instructions",
+        "agents",
+        "skills",
+        "hooks",
+        "prompts"
+      ]
+    }
+  ]
+}

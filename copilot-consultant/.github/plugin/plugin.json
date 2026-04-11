@@ -1,0 +1,33 @@
+{
+  "name": "copilot-consultant",
+  "description": "GitHub Copilot のカスタマイズ設定（instructions / prompts / agents / skills / hooks）を効率的に作成・管理するための相談窓口エージェントと専門スキル群",
+  "version": "1.0.0",
+  "keywords": [
+    "copilot",
+    "customization",
+    "instructions",
+    "agents",
+    "skills",
+    "hooks",
+    "prompts",
+    "plugins"
+  ],
+  "author": {
+    "name": "yuma-722"
+  },
+  "repository": "https://github.com/yuma-722/github-copilot-consultant",
+  "license": "MIT",
+  "agents": ["./agents"],
+  "commands": [
+    "./commands/update-copilot-customizations.md",
+    "./commands/update-skill-creator.md"
+  ],
+  "skills": [
+    "./skills/custom-agents-creator",
+    "./skills/custom-instructions-creator",
+    "./skills/hooks-creator",
+    "./skills/plugin-creator",
+    "./skills/prompt-creator",
+    "./skills/skill-creator"
+  ]
+}
