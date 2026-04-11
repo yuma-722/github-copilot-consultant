@@ -1,7 +1,7 @@
 ---
 description: 'GitHub Copilot（VS Code）のカスタマイズ資産（instructions / prompts / agents / skills / hooks）を公式ドキュメントの最新情報に合わせて点検・最小差分で更新する'
 argument-hint: '対象（例: skills/custom-agents-creator のみ or .github 全体）/完了条件（例: outdated な説明の修正のみ）/制約（例: 新規ファイル追加なし）'
-tools: [vscode, execute, read, agent, edit, search, web, ms-vscode.vscode-websearchforcopilot/websearch, todo]
+tools: [vscode, execute, read, agent, edit, search, web, browser, azure-mcp/search, ms-vscode.vscode-websearchforcopilot/websearch, todo]
 ---
 
 # 目的

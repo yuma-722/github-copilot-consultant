@@ -6,6 +6,7 @@
 
 ```md
 ---
+name: review-changes
 description: ここに prompt の目的を書く（例: PR をレビューする）
 ---
 
@@ -44,9 +45,8 @@ ${selection}
 description: 変更差分をチェックして要点をまとめる
 agent: agent
 tools:
-  - read_file
-  - grep_search
-  - get_changed_files
+  - read
+  - search
 argument-hint: scope=staged|unstaged
 ---
 
@@ -80,5 +80,6 @@ description: ドキュメントを規約に沿って更新する
 - 入力（追加文/selection/input variables）が明確
 - 出力形式が明確（見出し/箇条書き/JSON など）
 - 既存の規約はリンク参照し、prompt file に重複記載しない
+- `tools` だけ指定した場合は既定 agent が `agent` になることを理解している
 - `tools` を指定する場合、足りないツールで詰まらない（必要最小限 + 実行可能）
 - エディタ実行（再生）で試して、必要なら `argument-hint` を改善する
