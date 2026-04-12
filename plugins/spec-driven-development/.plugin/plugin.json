@@ -1,5 +1,5 @@
 {
 	"name": "spec-driven-development",
 	"version": "1.0.0",
-	"description": ""
+	"description": "仕様を起点に要件定義・設計・実装・検証・振り返り・引き渡しを6フェーズで進める instructions プラグイン"
 }

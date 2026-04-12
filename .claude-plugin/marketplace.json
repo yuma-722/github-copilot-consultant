@@ -10,7 +10,7 @@
   "plugins": [
     {
       "name": "copilot-consultant",
-      "source": "./copilot-consultant",
+      "source": "./plugins/copilot-consultant",
       "description": "GitHub Copilot のカスタマイズ設定（instructions / prompts / agents / skills / hooks）を効率的に作成・管理するための相談窓口エージェントと専門スキル群",
       "version": "1.0.0",
       "author": {
@@ -24,6 +24,24 @@
         "skills",
         "hooks",
         "prompts"
+      ]
+    },
+    {
+      "name": "spec-driven-development",
+      "source": "./plugins/spec-driven-development",
+      "description": "要件定義から設計・実装・検証・引き渡しまでを6フェーズで進める仕様駆動ワークフローの instructions プラグイン",
+      "version": "1.0.0",
+      "author": {
+        "name": "yuma-722"
+      },
+      "keywords": [
+        "copilot",
+        "workflow",
+        "spec-driven-development",
+        "requirements",
+        "design",
+        "validation",
+        "instructions"
       ]
     }
   ]
