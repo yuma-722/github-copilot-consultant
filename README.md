@@ -1,8 +1,8 @@
 # GitHub Copilot Consultant
 
-GitHub Copilotのカスタマイズを行うためのベースをそろえたRepoです。
+GitHub Copilot のカスタマイズ（instructions / prompts / agents / skills / hooks）を効率的に作成・管理するための **Agent Plugin** です。
 
-**狙い:** カスタムエージェント「Copilot Consultant」を入口にして、統合 Worker エージェント「Copilot Custom Worker」へ作業を委譲し、`.github` 配下のカスタマイズ一式を生成・更新できるようにするサンプルです。
+**狙い:** カスタムエージェント「Copilot Consultant」を入口にして、統合 Worker エージェント「Copilot Custom Worker」へ作業を委譲し、`.github` 配下のカスタマイズ一式を生成・更新します。Plugin としてインストールすれば、どのリポジトリでもすぐに使えます。
 
 ## ひと目でわかる関係図
 
@@ -32,6 +32,8 @@ flowchart LR
 ```
 .github/
 ├── copilot-instructions.md          # Always-on instructions（全体共通ルール）
+├── instructions/
+│   └── spec-driven-workflow.instructions.md  # 仕様駆動ワークフロー
 ├── agents/
 │   ├── copilot-consultant.agent.md  # Coordinator（入口・オーケストレーター）
 │   └── copilot-custom-worker.agent.md  # 統合 Worker（全カスタマイズ種別を担当）
@@ -47,6 +49,9 @@ flowchart LR
 │   └── plugin-creator/                # Agent Plugins 作成ナレッジ
 └── workflows/
     └── copilot-setup-steps.yml        # Copilot coding agent 用セットアップ
+plugins/
+├── copilot-consultant/                # Copilot カスタマイズ管理 Plugin
+└── spec-driven-workflow/              # 仕様駆動ワークフロー Plugin
 ```
 
 ## 何がどこに出る？（対応表）
@@ -60,73 +65,66 @@ flowchart LR
 | 新しいスキルを追加する | Copilot Custom Worker | `skill-creator` | `.github/skills/**/SKILL.md` |
 | カスタマイズをPluginに変換 | Copilot Custom Worker | `plugin-creator` | `plugins/<name>/plugin.json` |
 
-## プロンプトファイル（/コマンド）
-
-| コマンド | 説明 |
-| --- | --- |
-| `/update-copilot-customizations` | `.github/` 配下のカスタマイズ資産を公式ドキュメントの最新情報に合わせて点検・更新する |
-| `/update-skill-creator` | `skill-creator` Skill を最新仕様・ベストプラクティスに沿って改善する |
-
 ## 使い方
 
-### 基本フロー
-1. このリポジトリをVS Codeで開く
-2. Copilot Chatでカスタムエージェント「Copilot Consultant」を起動
-3. やりたいことを自然言語で依頼
-4. Coordinator が適切な Worker に作業を委譲し、成果物をドラフト
-5. 生成・更新されたファイルをレビューして取り込む
+> ⚠️ Agent Plugins は Preview 機能です。VS Code の設定で `chat.plugins.enabled` を `true` にしてください。
 
-### 依頼例
-- 「このリポジトリの開発規約に沿うように、Copilotをいい感じにカスタマイズする案を出して」
-- 「～で使うカスタムエージェントを作って。役割と禁止事項も含めて」
-- 「～をするスキルを作成して」
-- 「既存のカスタマイズが古いので、現状の構成に合わせて更新して」
+### 1. Plugin をインストール
 
-### /コマンドの使い方
-- Copilot Chatで `/update-copilot-customizations` と入力すると、カスタマイズ資産の棚卸し・最新化を開始
+以下のいずれかの方法でインストールします。
 
-## 設計方針
+#### 方法 A: マーケットプレイスから（推奨）
 
-- **Coordinator は編集しない**: Copilot Consultant はヒアリング・提案・合意取得に専念し、ファイル操作は Worker に委任（コンテキスト分離と並列実行のため）
-- **合意ファースト**: どの Worker もユーザー合意なしにファイルを変更しない（差分案のみ返す）
-- **最小差分**: 新規ファイル追加より既存ファイルの更新を優先
-- **スコープ厳守**: 変更対象は `.github/` 配下の Copilot カスタマイズ成果物のみ（ワークフロー・テンプレ・アプリコードは対象外）
-
-## 運用メモ
-- 生成物は必ずレビューしてから取り込む（規約・安全・意図ズレ防止）
-- VS Code Chat の Diagnostics で instructions / skills の読み込み状況を確認できる
-
-## Agent Plugin としてインストール
-
-このリポジトリは **Agent Plugin マーケットプレイス** として公開されています。他のプロジェクトから Copilot Consultant をインストールして使えます。
-
-> ⚠️ Agent Plugins は Preview 機能です。`chat.plugins.enabled` を `true` に設定してください。
-
-### マーケットプレイスとして追加（推奨）
-
-VS Code の `settings.json` に以下を追加すると、Extensions ビューの Agent Plugins に表示されます：
+VS Code の `settings.json` に以下を追加：
 
 ```jsonc
 "chat.plugins.marketplaces": ["yuma-722/github-copilot-consultant"]
 ```
 
-Extensions ビューで `@agentPlugins` を検索 → `copilot-consultant` → Install
+Extensions ビューで `@agentPlugins` を検索 → **copilot-consultant** → **Install**
 
-### ソースから直接インストール
+#### 方法 B: ソースから直接インストール
 
-1. コマンドパレット（`Ctrl+Shift+P`）
-2. `Chat: Install Plugin From Source`
+1. コマンドパレット（`Ctrl+Shift+P`）を開く
+2. `Chat: Install Plugin From Source` を実行
 3. `https://github.com/yuma-722/github-copilot-consultant` を入力
 
-### ローカルインストール
+#### 方法 C: ローカルインストール
+
+リポジトリをクローンし、`settings.json` に追加：
 
 ```jsonc
 "chat.pluginLocations": {
-  "/path/to/github-copilot-consultant/copilot-consultant": true
+  "/path/to/github-copilot-consultant/plugins/copilot-consultant": true
 }
 ```
 
-### ワークスペースで推奨設定する
+### 2. Copilot Chat で利用する
+
+インストール後、任意のワークスペースの Copilot Chat から利用できます。
+
+1. Copilot Chat を開く
+2. カスタムエージェント`copilot-consultant` に切り替える
+3. やりたいことを自然言語で依頼する
+4. 生成・更新されたファイルをレビューして取り込む
+
+### 3. /コマンドを使う
+
+Plugin インストール後は以下のスラッシュコマンドも利用できます：
+
+| コマンド | 説明 |
+| --- | --- |
+| `/copilot-consultant:update-copilot-customizations` | カスタマイズ資産を公式ドキュメントの最新情報に合わせて点検・更新する |
+| `/copilot-consultant:update-skill-creator` | skill-creator Skill を最新仕様に沿って改善する |
+
+### 依頼例
+
+- 「このリポジトリの開発規約に沿うように、Copilot をいい感じにカスタマイズする案を出して」
+- 「～で使うカスタムエージェントを作って。役割と禁止事項も含めて」
+- 「～をするスキルを作成して」
+- 「既存のカスタマイズが古いので、現状の構成に合わせて更新して」
+
+### チームに Plugin を推奨する
 
 チームメンバーに自動で Plugin を推奨するには、ワークスペース設定に追加：
 
@@ -145,6 +143,24 @@ Extensions ビューで `@agentPlugins` を検索 → `copilot-consultant` → I
   }
 }
 ```
+
+### 前提条件
+
+- VS Code（Insiders 推奨）
+- GitHub Copilot（Chat 有効）
+- `chat.plugins.enabled`: `true`
+- Docker（awesome-copilot MCP サーバー利用時）
+
+## 設計方針
+
+- **Coordinator は編集しない**: Copilot Consultant はヒアリング・提案・合意取得に専念し、ファイル操作は Worker に委任（コンテキスト分離と並列実行のため）
+- **合意ファースト**: どの Worker もユーザー合意なしにファイルを変更しない（差分案のみ返す）
+- **最小差分**: 新規ファイル追加より既存ファイルの更新を優先
+- **スコープ厳守**: 変更対象は `.github/` 配下の Copilot カスタマイズ成果物のみ（ワークフロー・テンプレ・アプリコードは対象外）
+
+## 運用メモ
+- 生成物は必ずレビューしてから取り込む（規約・安全・意図ズレ防止）
+- VS Code Chat の Diagnostics で instructions / skills の読み込み状況を確認できる
 
 ---
 

@@ -28,7 +28,7 @@ VS Code の `settings.json` に以下を追加してください：
 
 ```jsonc
 "chat.pluginLocations": {
-  "/path/to/github-copilot-consultant/copilot-consultant": true
+  "/path/to/github-copilot-consultant/plugins/copilot-consultant": true
 }
 ```
 
